@@ -2,7 +2,7 @@
 # pylint: disable=missing-docstring
 
 from config import Config
-from flask import Flask, request
+from flask import Flask, abort, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow  # NEW LINE (Order is important here!)
 
@@ -13,6 +13,17 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 from models import Product
 from schemas import many_product_schema, one_product_schema
+
+@app.route('/')
+def home():
+    products = db.session.query(Product).all()
+
+    return render_template('home.html', products=products)
+
+@app.route('/<int:product_id>')
+def product_html(product_id):
+    product = db.session.query(Product).get(product_id)
+    return render_template('product.html', product=product)
 
 @app.route(f'{BASE_URL}/products', methods=['GET'])
 def get_many_product():
