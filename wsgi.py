@@ -13,6 +13,11 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 from models import Product
 from schemas import many_product_schema, one_product_schema
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
+admin = Admin(app, template_mode='bootstrap3')
+admin.add_view(ModelView(Product, db.session))
 
 @app.route('/')
 def home():
